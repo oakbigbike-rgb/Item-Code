@@ -323,6 +323,24 @@ powershell -ExecutionPolicy Bypass -File tools\Publish-Web.ps1
 ดึงชีทล่าสุด → สร้าง `docs\index.html` ที่**เข้ารหัสด้วย ID + รหัสผ่าน** → push ขึ้น GitHub
 เว็บอัปเดตภายใน 1–2 นาทีหลัง push · ลิงก์เดิมไม่เปลี่ยน
 
+### ให้อัปเดตเว็บเองอัตโนมัติ
+
+```bash
+powershell -ExecutionPolicy Bypass -File tools\Register-DailyTask.ps1 -Publish -At 08:00 -EveryMinutes 60
+```
+
+ตั้ง Task Scheduler ให้ทำครบวงจรทุกชั่วโมง — ดึงชีท → สร้างหน้าเว็บ → push
+**ลิงก์จึงมีข้อมูลใหม่เสมอโดยไม่ต้องสั่งเอง** ตราบใดที่เครื่องนี้เปิดอยู่
+
+งานอัตโนมัติพิมพ์รหัสเองไม่ได้ จึงอ่าน ID/รหัสจาก `config\web-secret.json`
+
+```jsonc
+{ "id": "Wangruay001", "password": "รหัสของคุณ" }
+```
+
+ไฟล์นี้ **ไม่ถูก commit** และถูกจำกัดสิทธิ์ให้เฉพาะบัญชีคุณกับ SYSTEM
+เปลี่ยนรหัสก็แก้ไฟล์นี้แล้วรันใหม่ คนที่มีรหัสเก่าจะเปิดเว็บไม่ได้อีก
+
 **repo นี้เป็นสาธารณะ** ของที่ห้ามขึ้นจึงถูกกันไว้ใน `.gitignore` ทั้งหมด
 
 | ไม่ถูก commit | เพราะ |

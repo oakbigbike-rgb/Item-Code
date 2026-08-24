@@ -15,6 +15,7 @@ param(
     [string]$TaskName,
     [int]$EveryMinutes,      # ใส่เพื่อให้วนซ้ำทั้งวันทุก N นาที (เช่น 30)
     [switch]$DataOnly,       # ดึงชีทอย่างเดียว ไม่เติมโค้ด (ปลอดภัย ไม่เผาโค้ด)
+    [switch]$Publish,        # ดึงชีท + สร้างหน้าเว็บที่ล็อกรหัส + push ขึ้น GitHub
     [switch]$Remove
 )
 
@@ -22,7 +23,11 @@ $ErrorActionPreference = 'Stop'
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 # งานดึงชีทกับงานเติมโค้ดต้องแยกกัน ไม่งั้นเผลอตั้งงานเบื้องหลังที่เผาโค้ดทิ้งโดยไม่มีคนดู
-if ($DataOnly) {
+if ($Publish) {
+    $Target   = Join-Path $ScriptDir 'Publish-Web.ps1'
+    $Extra    = ''
+    if (-not $TaskName) { $TaskName = 'ItemCode อัปเดตเว็บ' }
+} elseif ($DataOnly) {
     $Target   = Join-Path $ScriptDir 'Watch-Codes.ps1'
     $Extra    = '-Once'
     if (-not $TaskName) { $TaskName = 'ItemCode ดึงโค้ดจากชีท' }
@@ -54,7 +59,8 @@ $settings = New-ScheduledTaskSettingsSet -StartWhenAvailable `
     -DontStopIfGoingOnBatteries -AllowStartIfOnBatteries `
     -ExecutionTimeLimit (New-TimeSpan -Hours 2)
 
-$desc = if ($DataOnly) { 'ดึงโค้ดจากชีทมาอัปเดตหน้า dashboard (ไม่เติมโค้ด)' }
+$desc = if ($Publish)  { 'ดึงชีท + สร้างหน้าเว็บที่ล็อกรหัส + push ขึ้น GitHub Pages' }
+        elseif ($DataOnly) { 'ดึงโค้ดจากชีทมาอัปเดตหน้า dashboard (ไม่เติมโค้ด)' }
         else { 'ดึงโค้ดจากชีทแล้วเติม+ตรวจโค้ดของทุกเกม' }
 
 Register-ScheduledTask -TaskName $TaskName -Action $action -Trigger $trigger `
