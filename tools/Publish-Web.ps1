@@ -41,7 +41,15 @@ if ($SkipUpdate) {
 # ------------------------------------------------- 2. สร้างหน้าเว็บที่ล็อกรหัส
 
 Step 'สร้างหน้าเว็บที่ล็อกรหัส'
-if (-not $env:ITEMCODE_PASSWORD) {
+
+# งานอัตโนมัติพิมพ์รหัสเองไม่ได้ จึงอ่านจากไฟล์ที่จำกัดสิทธิ์ไว้ (ไม่ถูก commit)
+$secretPath = Join-Path $Root 'config\web-secret.json'
+if (-not $env:ITEMCODE_PASSWORD -and (Test-Path $secretPath)) {
+    $s = Get-Content -Raw $secretPath -Encoding UTF8 | ConvertFrom-Json
+    $env:ITEMCODE_ID = $s.id
+    $env:ITEMCODE_PASSWORD = $s.password
+    Write-Host "  ใช้ ID '$($s.id)' จาก config\web-secret.json" -ForegroundColor DarkGray
+} elseif (-not $env:ITEMCODE_PASSWORD) {
     Write-Host 'ยังไม่ได้ตั้ง ID/รหัสผ่าน — สคริปต์จะถามให้ใส่' -ForegroundColor DarkGray
 }
 New-Item -ItemType Directory -Path $DocsDir -Force | Out-Null
@@ -71,8 +79,10 @@ Step 'push ขึ้น GitHub'
 Push-Location $Root
 try {
     # กันพลาดซ้ำอีกชั้น: ไฟล์ต้องห้ามต้องไม่ถูก track
-    foreach ($f in @('config/sources.json', 'web/data/codes.js', 'web/data/codes.json')) {
-        $tracked = & git ls-files --error-unmatch $f 2>$null
+    # ใช้ ls-files เฉย ๆ (ไม่ใส่ --error-unmatch เพราะมันเขียน stderr เวลาไฟล์ไม่ถูก track)
+    foreach ($f in @('config/sources.json', 'config/web-secret.json',
+                     'web/data/codes.js', 'web/data/codes.json')) {
+        $tracked = & git ls-files -- $f
         if ($tracked) { throw "หยุดก่อน — $f กำลังจะถูก push ขึ้น repo สาธารณะ" }
     }
 
