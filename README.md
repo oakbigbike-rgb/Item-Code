@@ -314,6 +314,29 @@ powershell -ExecutionPolicy Bypass -File tools\Register-DailyTask.ps1 -At 10:00
 
 ---
 
+## หน้าเว็บออนไลน์ (GitHub Pages)
+
+```bash
+powershell -ExecutionPolicy Bypass -File tools\Publish-Web.ps1
+```
+
+ดึงชีทล่าสุด → สร้าง `docs\index.html` ที่**เข้ารหัสด้วย ID + รหัสผ่าน** → push ขึ้น GitHub
+เว็บอัปเดตภายใน 1–2 นาทีหลัง push · ลิงก์เดิมไม่เปลี่ยน
+
+**repo นี้เป็นสาธารณะ** ของที่ห้ามขึ้นจึงถูกกันไว้ใน `.gitignore` ทั้งหมด
+
+| ไม่ถูก commit | เพราะ |
+|---|---|
+| `web/data/codes.*` | โค้ดดิบ ใครก็อ่านได้ |
+| `config/sources.json` | มี docId ของชีท ซึ่งเปิดดูโค้ดทั้งหมดได้ (ใช้ `sources.example.json` เป็นแบบแทน) |
+| `redeem/auth`, `redeem/profile` | session ล็อกอินเกม |
+| `share/` | ไฟล์ที่มีโค้ดจริง |
+
+`Publish-Web.ps1` ตรวจซ้ำสองชั้นก่อน push — ไล่หาโค้ดจริงในไฟล์ที่จะขึ้นเว็บ และเช็คว่าไฟล์ต้องห้าม
+ไม่ได้ถูก track ถ้าเจออย่างใดอย่างหนึ่งจะหยุดทันทีไม่ push
+
+---
+
 ## ความปลอดภัยของข้อมูล
 
 ```bash
