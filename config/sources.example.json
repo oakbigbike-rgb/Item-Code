@@ -1,0 +1,130 @@
+{
+  "_comment": "ตัวอย่างการตั้งค่า — คัดลอกเป็น sources.json แล้วใส่ docId ของชีทจริง (ไฟล์จริงไม่ถูก commit เพราะ docId เปิดชีทดูโค้ดได้)",
+  "_redeemFields": {
+    "url": "หน้าเติมโค้ด",
+    "requiresLogin": "true = ต้องรัน node login.mjs <gameId> เก็บ session ก่อน",
+    "codeInput": "selector ช่องกรอกโค้ดช่องเดียว",
+    "codeInputs": "ถ้าโค้ดถูกแบ่งหลายช่อง ใส่เป็น array ของ selector แทน codeInput",
+    "codeSeparator": "ตัวคั่นสำหรับหั่นโค้ดลง codeInputs (ค่าตั้งต้น '-')",
+    "extraFields": "{ selector: value } ช่องอื่นที่ต้องเลือกก่อนกดยืนยัน เช่นเซิร์ฟเวอร์",
+    "dismissSelectors": "ปุ่มที่ต้องปิดก่อน เช่นแบนเนอร์คุกกี้ (เลือกปุ่มปฏิเสธไว้)",
+    "submitButton": "ปุ่มยืนยัน",
+    "resultSelector": "กล่องข้อความผลลัพธ์ ใส่เป็น string หรือ array ก็ได้ (เว้นว่าง = อ่านข้อความที่โผล่ขึ้นมาใหม่ทั้งหน้า)",
+    "successText/failText/usedText": "คำที่ใช้ตัดสินผล (ไม่ใส่ก็ได้ มีชุดคำตั้งต้นภาษาไทย/อังกฤษให้แล้ว)",
+    "waitMs": "รอหลังกดยืนยัน (ค่าตั้งต้น 2500)",
+    "throttleMs": "เว้นระยะระหว่างโค้ด (ค่าตั้งต้น 1200)"
+  },
+  "games": [
+    {
+      "id": "zone4",
+      "name": "Zone4",
+      "docId": "ใส่-docId-ของชีท-ที่นี่",
+      "layout": "zone4",
+      "sheetFilter": "^(JAN|FEB|MAR|APR|MAY|JUN|JULY|JUL|AUG|SEP|OCT|NOV|DEC)$",
+      "redeem": {
+        "_note": "โค้ดรูปแบบ XXXX-XXXX-XXXX-XXXX แยกเป็น 4 ช่อง. เว็บอยู่หลัง Cloudflare — ต้องรันแบบ --headed --profile ให้ผ่านด่านตรวจเองก่อน",
+        "url": "https://itemcode.exe.in.th/zone4",
+        "requiresLogin": true,
+        "codeInputs": [
+          "input[name='code-1']",
+          "input[name='code-2']",
+          "input[name='code-3']",
+          "input[name='code-4']"
+        ],
+        "codeSeparator": "-",
+        "submitButton": "#itemcode-submit-btn",
+        "resultSelector": [
+          ".help-block.text-danger",
+          ".alert",
+          ".swal2-html-container"
+        ],
+        "waitMs": 3000,
+        "throttleMs": 2000
+      }
+    },
+    {
+      "id": "warz",
+      "name": "WarZ",
+      "docId": "ใส่-docId-ของชีท-ที่นี่",
+      "layout": "block",
+      "_sheetFilterNote": "ไม่ปิดท้ายด้วย $ เพราะบางวันมีคำต่อท้ายชื่อชีท เช่น '5 Sep Pro league'",
+      "sheetFilter": "^\\d{1,2}\\s+(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\\b",
+      "redeem": {
+        "_note": "หลัง passport.thehof.gg — รัน node login.mjs warz แล้ว node inspect.mjs warz เพื่อเก็บ selector จริงมาใส่",
+        "url": "https://member.thehof.gg/warzth/itemcode",
+        "requiresLogin": true,
+        "codeInput": "input[name='itemCode'], input[name='code'], input[type='text']",
+        "submitButton": "button:has-text('ใช้ไอเทมโค้ด'), button[type='submit']",
+        "resultSelector": [],
+        "waitMs": 3000,
+        "throttleMs": 1500
+      }
+    },
+    {
+      "id": "talesrunner",
+      "name": "Talesrunner",
+      "docId": "ใส่-docId-ของชีท-ที่นี่",
+      "layout": "block",
+      "_sheetFilterNote": "ไม่ปิดท้ายด้วย $ เพราะบางวันมีคำต่อท้ายชื่อชีท เช่น '5 Sep Pro league'",
+      "sheetFilter": "^\\d{1,2}\\s+(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\\b",
+      "redeem": {
+        "_note": "หลัง passport.thehof.gg — รัน node login.mjs talesrunner แล้ว node inspect.mjs talesrunner เพื่อเก็บ selector จริงมาใส่",
+        "url": "https://member.thehof.gg/talesrunner/itemcode",
+        "requiresLogin": true,
+        "codeInput": "input[name='itemCode'], input[name='code'], input[type='text']",
+        "submitButton": "button:has-text('ใช้ไอเทมโค้ด'), button[type='submit']",
+        "resultSelector": [],
+        "waitMs": 3000,
+        "throttleMs": 1500
+      }
+    },
+    {
+      "id": "cabal-pc",
+      "name": "Cabal PC",
+      "docId": "ใส่-docId-ของชีท-ที่นี่",
+      "layout": "cabal",
+      "sheetFilter": "^\\d{2}\\.\\d{2}\\s*PC$",
+      "redeem": {
+        "url": "https://th-member.combocabal.com/itemcode",
+        "requiresLogin": true,
+        "codeInput": "input[name='itemCode']",
+        "dismissSelectors": [
+          "button:has-text('ปฏิเสธ')"
+        ],
+        "submitButton": "button.btn-primary:has-text('ใช้ไอเทมโค้ด')",
+        "resultSelector": [
+          ".toast-body",
+          ".toast",
+          ".modal-body",
+          ".alert"
+        ],
+        "waitMs": 3000,
+        "throttleMs": 1500
+      }
+    },
+    {
+      "id": "cabal-m",
+      "name": "Cabal M",
+      "docId": "ใส่-docId-ของชีท-ที่นี่",
+      "layout": "cabal",
+      "sheetFilter": "^\\d{2}\\.\\d{2}\\s*M$",
+      "redeem": {
+        "url": "https://th-member.combocabalm.com/itemcode",
+        "requiresLogin": true,
+        "codeInput": "input[name='itemCode']",
+        "dismissSelectors": [
+          "button:has-text('ปฏิเสธ')"
+        ],
+        "submitButton": "button.btn-primary:has-text('ใช้ไอเทมโค้ด')",
+        "resultSelector": [
+          ".toast-body",
+          ".toast",
+          ".modal-body",
+          ".alert"
+        ],
+        "waitMs": 3000,
+        "throttleMs": 1500
+      }
+    }
+  ]
+}

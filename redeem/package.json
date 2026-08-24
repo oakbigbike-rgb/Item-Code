@@ -1,0 +1,15 @@
+{
+  "name": "itemcode-redeem-runner",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "เติมโค้ดผ่านหน้าเว็บของแต่ละเกมอัตโนมัติ แล้วบันทึกผลว่าเติมได้/ไม่ได้",
+  "scripts": {
+    "login": "node login.mjs",
+    "check": "node run.mjs",
+    "postinstall": "playwright install chromium"
+  },
+  "dependencies": {
+    "playwright": "^1.47.0"
+  }
+}

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ตรวจสอบ Item Code – แจกโค้ดสตรีม</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div>
+    <h1>ตรวจสอบ Item Code</h1>
+    <p class="sub">โค้ดแจกในไลฟ์สตรีมของทุกเกมที่ดูแล</p>
+  </div>
+  <div class="topbar-right">
+    <span id="generatedAt" class="stamp"></span>
+    <label class="autolabel" title="เช็คทุก 30 วินาทีว่ามีข้อมูลใหม่ไหม (ต้องเปิดผ่าน Serve.ps1)">
+      <input type="checkbox" id="chkAuto" checked> อัปเดตอัตโนมัติ
+    </label>
+    <button id="btnHowRefresh" class="btn ghost">วิธีอัปเดตข้อมูล</button>
+  </div>
+</header>
+
+<div id="updateBar" class="updatebar hidden">
+  <span>มีข้อมูลใหม่จากชีทแล้ว</span>
+  <button id="btnReload" class="btn tiny">โหลดใหม่</button>
+</div>
+
+<main>
+  <section id="summary" class="cards"></section>
+
+  <section class="panel">
+    <h2>ปฏิทินความครอบคลุมของโค้ด</h2>
+    <p class="hint">
+      แต่ละช่อง = 1 วัน · ตัวเลขคือ <b>กรอกแล้ว/ช่องที่ชีทเตรียมไว้</b> ·
+      <span class="key has">เขียว</span> กรอกครบ ·
+      <span class="key part">เหลือง</span> กรอกไม่ครบ ·
+      <span class="key none">แดง</span> ยังไม่ใส่โค้ดเลย หรือไม่มีชีทของวันที่ควรมี ·
+      <span class="key idle">เทา</span> ไม่ใช่วันลงโค้ด หรือยังไม่ได้เตรียม
+    </p>
+    <div id="calendar" class="calendar"></div>
+  </section>
+
+  <section class="panel">
+    <h2>ปฏิทินผลตรวจโค้ด <span id="checkStamp" class="stamp"></span></h2>
+    <p class="hint">
+      ตรวจแล้วกี่โค้ดของวันนั้น และใช้ได้จริงไหม ·
+      <span class="key has">เขียว</span> ตรวจครบ ใช้ได้หมด ·
+      <span class="key part">เหลือง</span> ตรวจยังไม่ครบ หรืออ่านผลไม่ออก ·
+      <span class="key none">แดง</span> มีโค้ดที่เติมไม่ได้ ·
+      <span class="key idle">เทา</span> ยังไม่ได้ตรวจ
+    </p>
+    <div id="checkCalendar" class="calendar"></div>
+  </section>
+
+  <section class="panel">
+    <div class="filters">
+      <label>เกม
+        <select id="fGame"><option value="">ทั้งหมด</option></select>
+      </label>
+      <label>สถานะ
+        <select id="fStatus">
+          <option value="">ทั้งหมด</option>
+          <option value="active">ใช้ได้ตอนนี้</option>
+          <option value="upcoming">ยังไม่เริ่ม</option>
+          <option value="expired">หมดอายุแล้ว</option>
+          <option value="missing">ยังไม่มีโค้ด</option>
+        </select>
+      </label>
+      <label>ผลตรวจสอบ
+        <select id="fResult">
+          <option value="">ทั้งหมด</option>
+          <option value="none">ยังไม่ได้ตรวจ</option>
+          <option value="ok">ใช้ได้ (เติมได้ + ถูกใช้แล้ว)</option>
+          <option value="pass">เติมได้</option>
+          <option value="used">ถูกใช้ไปแล้ว</option>
+          <option value="fail">เติมไม่ได้</option>
+          <option value="unknown">อ่านผลไม่ออก</option>
+          <option value="error">ตรวจไม่สำเร็จ</option>
+        </select>
+      </label>
+      <label>ความเสี่ยงถูกเดา
+        <select id="fRisk">
+          <option value="">ทั้งหมด</option>
+          <option value="high">เฉพาะโค้ดที่เดาง่าย</option>
+          <option value="none">ไม่พบความเสี่ยง</option>
+        </select>
+      </label>
+      <label>ตั้งแต่วันที่
+        <input type="date" id="fFrom">
+      </label>
+      <label>ถึงวันที่
+        <input type="date" id="fTo">
+      </label>
+      <label class="grow">ค้นหา
+        <input type="search" id="fSearch" placeholder="โค้ด / ชื่อไอเทม / ชื่อชีท">
+      </label>
+      <button id="btnToday" class="btn">เฉพาะวันนี้</button>
+      <button id="btnClear" class="btn ghost">ล้างตัวกรอง</button>
+      <button id="btnExport" class="btn">ส่งออก CSV</button>
+      <button id="btnImport" class="btn ghost">นำเข้าผล redeem</button>
+      <input type="file" id="fileImport" accept="application/json" hidden>
+    </div>
+    <p id="tableInfo" class="hint"></p>
+    <div class="bulkbar">
+      <span>บันทึกผลทีเดียวทั้งชุดที่กรองอยู่:</span>
+      <button id="btnBulkPass" class="btn tiny">ผ่านทั้งหมด</button>
+      <button id="btnBulkFail" class="btn tiny">ไม่ผ่านทั้งหมด</button>
+      <button id="btnBulkClear" class="btn tiny ghost">ล้างผลที่กรอกเอง</button>
+      <span class="to">ผลจาก runner ไม่ถูกแตะ — ปุ่มนี้เขียนเฉพาะผลที่กรอกเอง</span>
+    </div>
+    <div class="table-wrap">
+      <table id="codeTable">
+        <thead>
+          <tr>
+            <th>เกม</th>
+            <th>วันที่</th>
+            <th>โค้ด</th>
+            <th>ช่วงเวลาใช้งาน</th>
+            <th>Limit</th>
+            <th>ไอเทม</th>
+            <th>สถานะ</th>
+            <th>ผลการตรวจสอบ</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <button id="btnMore" class="btn ghost hidden">แสดงเพิ่ม</button>
+  </section>
+</main>
+
+<dialog id="dlgRefresh">
+  <h3>วิธีอัปเดตข้อมูลจาก Google Sheets</h3>
+  <p>ดึงครั้งเดียว:</p>
+  <pre>powershell -ExecutionPolicy Bypass -File tools\Update-Codes.ps1</pre>
+  <p>ให้ดึงเองเรื่อย ๆ (ทุก 15 นาที) และตรวจโค้ดใหม่ให้ด้วย:</p>
+  <pre>powershell -ExecutionPolicy Bypass -File tools\Watch-Codes.ps1 -Check</pre>
+  <p class="hint">สคริปต์ดึงชีททั้งหมดใหม่ (รวมชีทวันที่เพิ่งสร้าง) แล้วเขียนทับ <code>web\data\codes.js</code>
+     · ถ้าเปิดหน้านี้ผ่าน <code>Serve.ps1</code> และเปิด "อัปเดตอัตโนมัติ" ไว้ หน้าจะโหลดข้อมูลใหม่เองภายใน 30 วินาที</p>
+  <form method="dialog"><button class="btn">ปิด</button></form>
+</dialog>
+
+<script src="data/codes.js"></script>
+<script src="data/results.js"></script>
+<script src="risk.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

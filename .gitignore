@@ -1,0 +1,24 @@
+node_modules/
+
+# session ล็อกอินเกม — หลุดแล้วเข้าบัญชีได้ทันที
+redeem/auth/
+redeem/profile/
+redeem/shots/
+redeem/results.json
+redeem/status.json
+logs/
+
+# ไฟล์แชร์ที่มีโค้ดจริง (ตัวที่เอาขึ้นเว็บอยู่ใน docs/ และถูกเข้ารหัสแล้ว)
+share/
+
+# ข้อมูลโค้ดดิบ — repo นี้เป็น public ห้ามให้โค้ดจริงขึ้นไปเด็ดขาด
+web/data/codes.js
+web/data/codes.json
+web/data/changes.js
+web/data/changes.json
+web/data/results.js
+web/data/status.js
+web/data/version.json
+
+# มี docId ของชีท ซึ่งชีทแชร์แบบ "ใครมีลิงก์ก็ดูได้" = เท่ากับปล่อยโค้ดทางอ้อม
+config/sources.json
