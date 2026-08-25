@@ -83,7 +83,8 @@
       "name": "Cabal PC",
       "docId": "ใส่-docId-ของชีท-ที่นี่",
       "layout": "cabal",
-      "sheetFilter": "^\\d{2}\\.\\d{2}\\s*PC$",
+      "_sheetFilterNote": "รับทั้ง 01.09 และ 1.09 เพราะบางเดือนตั้งชื่อวันเป็นเลขหลักเดียว",
+      "sheetFilter": "^\\d{1,2}\\.\\d{1,2}\\s*PC\\b",
       "redeem": {
         "url": "https://th-member.combocabal.com/itemcode",
         "requiresLogin": true,
@@ -107,7 +108,8 @@
       "name": "Cabal M",
       "docId": "ใส่-docId-ของชีท-ที่นี่",
       "layout": "cabal",
-      "sheetFilter": "^\\d{2}\\.\\d{2}\\s*M$",
+      "_sheetFilterNote": "รับทั้ง 01.09 และ 1.09 เพราะบางเดือนตั้งชื่อวันเป็นเลขหลักเดียว",
+      "sheetFilter": "^\\d{1,2}\\.\\d{1,2}\\s*M\\b",
       "redeem": {
         "url": "https://th-member.combocabalm.com/itemcode",
         "requiresLogin": true,
