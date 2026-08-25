@@ -195,6 +195,12 @@ async function lockPage(fullHtml, password) {
   button:disabled { opacity: .6; cursor: default; }
   .msg { margin-top: 12px; font-size: 12.5px; min-height: 18px; color: #ef5f5f; }
   .msg.working { color: #9aa3b2; }
+  .remember {
+    display: flex; align-items: center; gap: 7px;
+    margin-top: 13px; font-size: 12.5px; color: #9aa3b2; cursor: pointer;
+  }
+  .remember input { width: auto; accent-color: #4da3ff; margin: 0; }
+  .hint-pw { font-size: 11.5px; color: #6b7280; margin-top: 7px; }
 </style>
 <div class="box">
   <h1>เข้าสู่ระบบ</h1>
@@ -204,6 +210,10 @@ async function lockPage(fullHtml, password) {
     <input type="text" id="uid" autocomplete="username" autocapitalize="off" spellcheck="false" autofocus>
     <label for="pw" style="margin-top:12px">รหัสผ่าน</label>
     <input type="password" id="pw" autocomplete="current-password">
+    <label class="remember" for="rem">
+      <input type="checkbox" id="rem" checked> จำ ID ไว้ในเครื่องนี้
+    </label>
+    <p class="hint-pw">จำเฉพาะ ID — รหัสผ่านต้องพิมพ์ทุกครั้ง</p>
     <button type="submit" id="go">เปิดดูข้อมูล</button>
   </form>
   <div class="msg" id="msg"></div>
@@ -213,14 +223,26 @@ async function lockPage(fullHtml, password) {
   var PAYLOAD = ${JSON.stringify(payload)};
   var ITER = ${ITER};
   var f = document.getElementById('f'), pw = document.getElementById('pw');
-  var uid = document.getElementById('uid');
+  var uid = document.getElementById('uid'), rem = document.getElementById('rem');
   var msg = document.getElementById('msg'), go = document.getElementById('go');
+  var UID_KEY = 'itemcode-uid';
 
   if (!(window.crypto && crypto.subtle)) {
     msg.textContent = 'เบราว์เซอร์นี้เปิดไฟล์เข้ารหัสไม่ได้ ลองเปิดด้วย Chrome หรือ Edge';
     go.disabled = true;
     return;
   }
+
+  // เติม ID ที่จำไว้ให้ แล้วโดดไปช่องรหัสผ่านเลย — จำแค่ ID เท่านั้น ไม่เคยเก็บรหัสผ่าน
+  try {
+    var saved = localStorage.getItem(UID_KEY);
+    if (saved) { uid.value = saved; rem.checked = true; pw.focus(); }
+    else { uid.focus(); }
+  } catch (e) { uid.focus(); }
+
+  rem.addEventListener('change', function () {
+    if (!rem.checked) { try { localStorage.removeItem(UID_KEY); } catch (e) {} }
+  });
 
   f.addEventListener('submit', async function (ev) {
     ev.preventDefault();
@@ -236,6 +258,11 @@ async function lockPage(fullHtml, password) {
         km, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
       var plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: raw.slice(16, 28) }, key, raw.slice(28));
       var html = new TextDecoder().decode(plain);
+      // เก็บ ID ต่อเมื่อรหัสถูกจริง จะได้ไม่จำ ID ที่พิมพ์ผิดไว้
+      try {
+        if (rem.checked) localStorage.setItem(UID_KEY, uid.value.trim());
+        else localStorage.removeItem(UID_KEY);
+      } catch (e) {}
       document.open(); document.write(html); document.close();
     } catch (e) {
       msg.className = 'msg';
